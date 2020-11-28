@@ -1,3 +1,4 @@
+import json
 from bottle import route, run, static_file, get
 from bottle_websocket import GeventWebSocketServer
 from bottle_websocket import websocket
@@ -10,15 +11,24 @@ def echo(ws):
         msg = ws.receive()
 
         if msg is not None:
-            print(msg)
-            """if msg == 'dir':
-                p = subprocess.Popen('john --format=raw-sha256 qwerty', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+            instructions = json.loads(msg)
 
-                while True:
-                    line = p.stdout.readline()
-                    ws.send(line)
-                    if not line:
-                        break"""
+            # Write hash to file
+            f = open("john/passwd", "w")
+            f.write(instructions['chaine'])
+            f.close()
+
+            # Run command
+            command = 'cd john && john --format={} passwd'.format(instructions['method'])
+            print(command)
+            p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+
+            # Send command output to client via WebSocket
+            while True:
+                line = p.stdout.readline()
+                ws.send(line)
+                if not line:
+                    break
         else:
             break
 

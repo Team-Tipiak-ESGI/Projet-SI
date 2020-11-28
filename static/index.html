@@ -1,32 +1,40 @@
 <!DOCTYPE html>
 <html>
+<head></head>
 
 <body>
-<form onsubmit="return sendForm(this);">
-    <div>
-        <label for="string">Chaine chiffrée</label>
-        <input type="text" id="string" name="chainechiffree">
-    </div>
-    <div>
-        <label>Méthode :</label>
-        <select name="hashmethode">
-            <option value="raw-sha256">Raw-SHA256</option>
-            <option>Raw-SHA1</option>
-            <option>Raw-MD5</option>
-            <option>bcrypt</option>
-            <option>mysql</option>
-            <option>Raw-MD5</option>
-        </select>
-    </div>
+<main>
+    <form onsubmit="return sendForm(this);">
+        <div>
+            <label for="string">Chaine chiffrée</label>
+            <input type="text" id="string" name="chainechiffree">
+        </div>
 
-     <div class="button">
-        <button type="submit">Soumettre</button>
-    </div>
-</form>
+        <div>
+            <label>Méthode :</label>
+            <select name="hashmethode">
+                <option value="raw-sha256">Raw-SHA256</option>
+                <option>Raw-SHA1</option>
+                <option>Raw-MD5</option>
+                <option>bcrypt</option>
+                <option>mysql</option>
+                <option>Raw-MD5</option>
+            </select>
+        </div>
+
+        <div class="button">
+            <button type="submit">Soumettre</button>
+        </div>
+    </form>
+
+    <div id="output"></div>
+</main>
 
 <script>
+    // Create and open WebSocket
     const socket = new WebSocket("ws://localhost:8080/websocket");
 
+    // Send form
     function sendForm(form) {
         const formData = new FormData(form);
         const data = {
@@ -34,17 +42,23 @@
             method: formData.get('hashmethode'),
         }
 
-        socket.send(JSON.stringify(data)) // Envoie des données via websocket
+        output.innerText = '';
+
+        socket.send(JSON.stringify(data)) // Envoi des données via websocket
 
         return false;
     }
 
+    // On socket opened
     socket.onopen = function (event) {
-        socket.send('dir');
+        //socket.send('dir');
     }
 
+    // On message received
     socket.onmessage = function (event) {
         event.data.text().then((text) => {
+            // Add text on page
+            output.innerText += text;
             console.log(text);
         });
     }
