@@ -19,7 +19,7 @@ def echo(ws):
             f.close()
 
             # Run command
-            command = 'cd john && john --format={} passwd'.format(instructions['method'])
+            command = 'cd john && del john.pot && john --format={} passwd'.format(instructions['method'])
             print(command)
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
