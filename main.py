@@ -7,6 +7,8 @@ import subprocess
 
 @get('/websocket', apply=[websocket])
 def echo(ws):
+    methods = ["raw-SHA256", "raw-SHA1", "raw-MD5", "bcrypt", "mysql"]
+
     while True:
         msg = ws.receive()
 
@@ -18,8 +20,13 @@ def echo(ws):
             f.write(instructions['chaine'])
             f.close()
 
+            # Verify if method is available
+            method = int(instructions['method'])
+            if not 0 <= method <= 4:
+                break
+
             # Run command
-            command = 'cd john && del john.pot && john --format={} passwd'.format(instructions['method'])
+            command = 'cd john && del john.pot && john --format={} passwd'.format(methods[method])
             print(command)
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 

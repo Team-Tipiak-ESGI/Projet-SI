@@ -9,19 +9,17 @@
     <form onsubmit="return sendForm(this);">
         <div>
             <label for="string">Chaine chiffrée</label>
-            <textarea type="text" id="string" name="chainechiffree">
-            </textarea>
+            <textarea type="text" id="string" name="hashed-string"></textarea>
         </div>
 
         <div>
             <label>Méthode :</label>
-            <select name="hashmethode">
-                <option value="raw-sha256">Raw-SHA256</option>
-                <option>Raw-SHA1</option>
-                <option>Raw-MD5</option>
-                <option>bcrypt</option>
-                <option>mysql</option>
-                <option>Raw-MD5</option>
+            <select name="hash-method">
+                <option value="0">Raw-SHA256</option>
+                <option value="1">Raw-SHA1</option>
+                <option value="2">Raw-MD5</option>
+                <option value="3">bcrypt</option>
+                <option value="4">mysql</option>
             </select>
         </div>
 
@@ -36,13 +34,14 @@
 <script>
     // Create and open WebSocket
     const socket = new WebSocket("ws://localhost:8080/websocket");
+    const output = document.getElementById('output');
 
     // Send form
     function sendForm(form) {
         const formData = new FormData(form);
         const data = {
-            chaine: formData.get('chainechiffree'),
-            method: formData.get('hashmethode'),
+            chaine: formData.get('hashed-string'),
+            method: formData.get('hash-method'),
         }
 
         output.innerText = '';
