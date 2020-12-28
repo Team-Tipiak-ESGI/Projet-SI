@@ -21,6 +21,9 @@ def echo(ws):
             f.close()
 
             # Verify if method is available
+            if not instructions['method'].isnumeric():
+                break
+
             method = int(instructions['method'])
             if not 0 <= method <= 4:
                 break
