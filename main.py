@@ -5,6 +5,17 @@ from bottle_websocket import websocket
 import subprocess
 
 
+def run_command(command, ws):
+    print(command)
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+
+    # Send command output to client via WebSocket
+    while True:
+        line = p.stdout.readline()
+        ws.send(line)
+        if not line:
+            break
+
 @get('/websocket', apply=[websocket])
 def echo(ws):
     methods = ["raw-SHA256", "raw-SHA1", "raw-MD5", "bcrypt", "mysql"]
@@ -17,7 +28,7 @@ def echo(ws):
 
             # Write hash to file
             f = open("john/passwd", "w")
-            f.write(instructions['chaine'])
+            f.write(instructions['string'])
             f.close()
 
             # Verify if method is available
@@ -28,17 +39,13 @@ def echo(ws):
             if not 0 <= method <= 4:
                 break
 
-            # Run command
-            command = 'cd john && del john.pot && john --format={} passwd'.format(methods[method])
-            print(command)
-            p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+            # Crack passwords
+            command = 'cd john && john --format={} passwd'.format(methods[method])
+            run_command(command, ws)
 
-            # Send command output to client via WebSocket
-            while True:
-                line = p.stdout.readline()
-                ws.send(line)
-                if not line:
-                    break
+            # Show passwords
+            command = 'cd john && john --format={} --show passwd'.format(methods[method])
+            run_command(command, ws)
         else:
             break
 
@@ -46,6 +53,10 @@ def echo(ws):
 @route('/')
 def index():
     return static_file('index.html', root='./static', mimetype='text/html')
+
+@route('/<path:path>')
+def index(path):
+    return static_file(path, root='./static')
 
 
 run(host='localhost', port=8080, server=GeventWebSocketServer)
