@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="styles/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="utf-8">
     <title>John The Ripper Web Interface</title>
 </head>
@@ -35,7 +36,7 @@
 <main class="container my-3">
     <div class="bg-dark p-5 rounded shadow-lg">
         <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <h1>John The Ripper</h1>
 
                 <form onsubmit="return sendForm(this);">
@@ -56,24 +57,23 @@
                         </select>
                     </div>
 
-                    <div class="button mb-3">
-                        <button type="submit" class="btn btn-primary">Send</button>
+                    <div class="mb-3">
+                        <button class="btn btn-primary" type="submit" id="button">
+                            <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                            <span id="button-text">Send</span>
+                        </button>
                     </div>
                 </form>
             </div>
 
-            <div class="col-6">
-                <h1>Output</h1>
-                <pre id="output"></pre>
+            <hr class="d-md-none col-12">
 
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border d-none" role="status" id="spinner">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-
+            <div class="col-12 col-md-6">
                 <h1>Results</h1>
                 <div id="results">None yet</div>
+
+                <h1>Output</h1>
+                <pre id="output" class="bg-secondary rounded p-2"></pre>
             </div>
         </div>
     </div>

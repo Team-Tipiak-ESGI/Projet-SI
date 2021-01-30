@@ -16,6 +16,8 @@ function sendForm(form) {
 
     // Show spinner
     document.getElementById('spinner').classList.remove('d-none');
+    document.getElementById('button').disabled = true;
+    document.getElementById('button-text').innerText = 'Loading...';
 
     // Clear previous results
     document.getElementById('results').innerHTML = '';
@@ -47,6 +49,8 @@ socket.onmessage = function (event) {
         // Hide spinner
         if (text.includes('0 left') || text.includes('Session completed')) {
             document.getElementById('spinner').classList.add('d-none');
+            document.getElementById('button').disabled = false;
+            document.getElementById('button-text').innerText = 'Send';
         }
     });
 }
