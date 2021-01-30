@@ -17,3 +17,14 @@ body {
 .bg-dark {
     background-color: #343a40!important;
 }
+
+/* Copyleft */
+
+.copyleft {
+    display: inline-block;
+    transform: rotate(180deg);
+}
+
+.copyleft::after {
+    content: "\00a9";
+}
