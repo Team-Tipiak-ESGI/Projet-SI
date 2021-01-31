@@ -3,18 +3,26 @@ from bottle import route, run, static_file, get
 from bottle_websocket import GeventWebSocketServer
 from bottle_websocket import websocket
 import subprocess
+from threading import Thread
+
+
+def send_line(stdout, ws):
+    # Send command output to client via WebSocket
+    while True:
+        line = stdout.readline()
+        ws.send(line)
+        if not line:
+            break
 
 
 def run_command(command, ws):
     print(command)
     p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
 
-    # Send command output to client via WebSocket
-    while True:
-        line = p.stdout.readline()
-        ws.send(line)
-        if not line:
-            break
+    t = Thread(target=send_line, args=(p.stdout, ws))
+    t.daemon = True  # thread dies with the program
+    t.start()
+
 
 @get('/websocket', apply=[websocket])
 def echo(ws):
@@ -54,9 +62,11 @@ def echo(ws):
 def index():
     return static_file('index.html', root='./static', mimetype='text/html')
 
+
 @route('/<path:path>')
 def index(path):
     return static_file(path, root='./static')
 
 
-run(host='localhost', port=8080, server=GeventWebSocketServer)
+if __name__ == '__main__':
+    run(host='localhost', port=8080, server=GeventWebSocketServer)
