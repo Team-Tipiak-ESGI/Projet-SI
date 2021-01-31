@@ -1,6 +1,10 @@
 // Create and open WebSocket
 const socket = new WebSocket(`ws://${window.location.host}/websocket`);
 const output = document.getElementById('output');
+const spinner = document.getElementById('spinner');
+const button = document.getElementById('button');
+const results = document.getElementById('results');
+const button_text = document.getElementById('button-text');
 
 // Send form
 function sendForm(form) {
@@ -15,12 +19,12 @@ function sendForm(form) {
     socket.send(JSON.stringify(data)) // Send data through websocket
 
     // Show spinner
-    document.getElementById('spinner').classList.remove('d-none');
-    document.getElementById('button').disabled = true;
-    document.getElementById('button-text').innerText = 'Loading...';
+    spinner.classList.remove('d-none');
+    button.disabled = true;
+    button_text.innerText = 'Loading...';
 
     // Clear previous results
-    document.getElementById('results').innerHTML = '';
+    results.innerHTML = '';
 
     return false;
 }
@@ -48,9 +52,9 @@ socket.onmessage = function (event) {
 
         // Hide spinner
         if (text.includes('0 left') || text.includes('Session completed')) {
-            document.getElementById('spinner').classList.add('d-none');
-            document.getElementById('button').disabled = false;
-            document.getElementById('button-text').innerText = 'Send';
+            spinner.classList.add('d-none');
+            button.disabled = false;
+            button_text.innerText = 'Send';
         }
     });
 }
